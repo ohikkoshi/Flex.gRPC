@@ -108,6 +108,7 @@ namespace Flex.RPC
 
 			for (int i = 0; i < 10; i++) {
 				if (context.CancellationToken.IsCancellationRequested) {
+					Console.WriteLine($"{context.Status.StatusCode.ToString()}");
 					break;
 				}
 

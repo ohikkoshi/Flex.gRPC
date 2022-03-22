@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 8632
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,9 @@ namespace Flex.RPC
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
 
+	/// <summary>
+	/// <see href="https://grpc.github.io/grpc/csharp/api/Grpc.Core.Channel.html" />
+	/// </summary>
 	public class ChannelContainer
 	{
 		//
@@ -25,7 +29,7 @@ namespace Flex.RPC
 		int connection;
 
 		//
-		public event EventHandler<ChannelState>? onStateChanged;
+		public event EventHandler<ChannelState> onStateChanged = null!;
 
 
 		/// <summary>
@@ -68,7 +72,7 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		public void Start() => StartAsync().Wait();
+		public void Start() => StartAsync().ConfigureAwait(false);
 
 		/// <summary>
 		/// .
@@ -87,7 +91,7 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		public void Shutdown() => ShutdownAsync().Wait();
+		public void Shutdown() => ShutdownAsync().ConfigureAwait(false);
 
 		/// <summary>
 		/// .
@@ -104,3 +108,4 @@ namespace Flex.RPC
 		}
 	}
 }
+#pragma warning restore 8632

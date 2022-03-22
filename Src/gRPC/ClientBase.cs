@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 8632
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,9 @@ namespace Flex.RPC
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
 
+	/// <summary>
+	/// <see href="https://grpc.github.io/grpc/csharp/api/Grpc.Core.Channel.html" />
+	/// </summary>
 	public class ClientBase
 	{
 		//
@@ -73,3 +77,4 @@ namespace Flex.RPC
 		public Task ShutdownAsync() => channel?.ShutdownAsync() ?? Task.CompletedTask;
 	}
 }
+#pragma warning restore 8632

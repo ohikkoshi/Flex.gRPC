@@ -34,9 +34,7 @@ namespace Flex.RPC
 		/// <param name="e"></param>
 		public override void OnStateChanged(object? sender, ChannelState e)
 		{
-#if true
 			Console.WriteLine($"{Host}:{Port} - {e.ToString()}");
-#endif
 		}
 
 		/// <summary>
@@ -44,14 +42,12 @@ namespace Flex.RPC
 		/// </summary>
 		public void Unary()
 		{
-#if true
 			try {
 				var req = new Request();
 				var res = client.Unary(req);
 			} catch (Exception e) {
 				Console.WriteLine($"{e.TargetSite}\n{e.Message}\n{e.StackTrace}");
 			}
-#endif
 		}
 
 		/// <summary>
@@ -60,49 +56,40 @@ namespace Flex.RPC
 		/// <returns></returns>
 		public async void ClientStream()
 		{
-#if true
-			try {
-				var req = client.ClientStream();
+			using (var req = client.ClientStream()) {
+				try {
+					for (int i = 0; i < 10; i++) {
+						Console.WriteLine($"{i}");
 
-				for (int i = 0; i < 10; i++) {
-					Console.WriteLine($"{i}");
+						var obj = new Request();
+						await req.RequestStream.WriteAsync(obj);
+						await Task.Delay(TimeSpan.FromSeconds(0.5));
+					}
 
-
-
-					var obj = new Request();
-					await req.RequestStream.WriteAsync(obj);
-					await Task.Delay(TimeSpan.FromSeconds(0.5));
+					await req.RequestStream.CompleteAsync();
+				} catch (Exception e) {
+					Console.WriteLine($"{e.TargetSite}\n{e.Message}\n{e.StackTrace}");
 				}
-
-				await req.RequestStream.CompleteAsync();
-			} catch (Exception e) {
-				Console.WriteLine($"{e.TargetSite}\n{e.Message}\n{e.StackTrace}");
 			}
-#else
-			await Task.CompletedTask;
-#endif
 		}
 
-		/// <summary>
-		/// .
+		/
+	/// .
 		/// </summary>
 		/// <returns></returns>
 		public async void ServerStream()
 		{
-#if true
-			try {
-				var req = new Request();
-				var res = client.ServerStream(req);
+			var req = new Request();
 
-				while (await res.ResponseStream.MoveNext()) {
-					var obj = res.ResponseStream.Current;
+			using (var res = client.ServerStream(req)) {
+				try {
+					while (await res.ResponseStream.MoveNext()) {
+						var obj = res.ResponseStream.Current;
+					}
+				} catch (Exception e) {
+					Console.WriteLine($"{e.TargetSite}\n{e.Message}\n{e.StackTrace}");
 				}
-			} catch (Exception e) {
-				Console.WriteLine($"{e.TargetSite}\n{e.Message}\n{e.StackTrace}");
 			}
-#else
-			await Task.CompletedTask;
-#endif
 		}
 	}
 }

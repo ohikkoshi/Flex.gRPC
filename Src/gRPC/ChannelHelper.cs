@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 8632
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,3 +35,4 @@ namespace Flex.RPC
 		}
 	}
 }
+#pragma warning restore 8632
