@@ -40,12 +40,12 @@ namespace Flex.RPC
 			Console.WriteLine($"new server({ip}:{port}).");
 			Console.WriteLine("Press any key to shutdown the server...");
 
-			var host = new Flex.RPC.Host(ip, port);
-			host.Start();
+			var server = new Flex.RPC.BasicServer(ip, port);
+			server.Start();
 
 			Console.ReadKey();
 			Console.WriteLine("Shutdown App...");
-			host.Shutdown();
+			server.Shutdown();
 		}
 
 		static void Client(string ip, int port)
@@ -53,7 +53,7 @@ namespace Flex.RPC
 			Console.WriteLine($"new client({ip}:{port}).");
 			Console.WriteLine("Press any key to shutdown the client...");
 
-			var client = new Flex.RPC.Client(ip, port);
+			var client = new Flex.RPC.BasicClient(ip, port);
 			client.Start();
 
 			client.Unary();

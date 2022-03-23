@@ -10,7 +10,7 @@ namespace Flex.RPC
 	using Grpc.Core;
 	using gRPC.Proto.Services;
 
-	public class Host : ServerBase
+	public class BasicServer : ServerBase
 	{
 		/// <summary>
 		/// .
@@ -18,7 +18,7 @@ namespace Flex.RPC
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <returns></returns>
-		public Host(string host = "127.0.0.1", int port = 30000) : base(host, port)
+		public BasicServer(string host = "127.0.0.1", int port = 30000) : base(host, port)
 		{
 			BindService(Basic.BindService(new BasicService()));
 		}

@@ -10,7 +10,7 @@ namespace Flex.RPC
 	using Grpc.Core;
 	using gRPC.Proto.Services;
 
-	public class Client : ClientBase
+	public class BasicClient : ClientBase
 	{
 		//
 		Basic.BasicClient client;
@@ -22,7 +22,7 @@ namespace Flex.RPC
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <returns></returns>
-		public Client(string host = "127.0.0.1", int port = 30000) : base(host, port)
+		public BasicClient(string host = "127.0.0.1", int port = 30000) : base(host, port)
 		{
 			client = new Basic.BasicClient(Channel);
 		}
