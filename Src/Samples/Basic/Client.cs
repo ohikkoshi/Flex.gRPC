@@ -73,8 +73,8 @@ namespace Flex.RPC
 			}
 		}
 
-		/
-	/// .
+		/// <summary>
+		/// .
 		/// </summary>
 		/// <returns></returns>
 		public async void ServerStream()
