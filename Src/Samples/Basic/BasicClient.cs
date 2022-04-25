@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Flex.RPC
 {
+	using Google.Protobuf;
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
 	using gRPC.Proto.Services;
@@ -25,6 +27,15 @@ namespace Flex.RPC
 		public BasicClient(string host = "127.0.0.1", int port = 30000) : base(host, port)
 		{
 			client = new Basic.BasicClient(Channel);
+			SharedChannel.onStateChanged += OnStateChanged;
+		}
+
+		/// <summary>
+		/// .
+		/// </summary>
+		~BasicClient()
+		{
+			SharedChannel.onStateChanged -= OnStateChanged;
 		}
 
 		/// <summary>
@@ -32,9 +43,10 @@ namespace Flex.RPC
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public override void OnStateChanged(object? sender, ChannelState e)
+		public void OnStateChanged(object? sender, ChannelState e)
 		{
-			Console.WriteLine($"{Host}:{Port} - {e.ToString()}");
+			var state = e.ToString();
+			Console.WriteLine(state);
 		}
 
 		/// <summary>

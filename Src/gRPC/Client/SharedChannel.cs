@@ -1,5 +1,6 @@
 ﻿#pragma warning disable 8632
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,24 +8,64 @@ using System.Threading.Tasks;
 
 namespace Flex.RPC
 {
+	using Google.Protobuf;
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
+
+	public partial class SharedChannel
+	{
+		//
+		static ConcurrentDictionary<int, SharedChannel> channels = new ConcurrentDictionary<int, SharedChannel>();
+
+
+		/// <summary>
+		/// .
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="port"></param>
+		/// <returns></returns>
+		public static SharedChannel Instantiate(string host, int port)
+		{
+			int hash = $"{host}:{port}".GetHashCode();
+
+			if (channels.TryGetValue(hash, out var value)) {
+				return value;
+			}
+
+			var container = new SharedChannel(host, port, hash);
+			channels.TryAdd(hash, container);
+
+			return container;
+		}
+
+		/// <summary>
+		/// .
+		/// </summary>
+		/// <param name="channel"></param>
+		public static void Release(SharedChannel channel)
+		{
+			if (channel == null) {
+				return;
+			}
+
+			int hash = channel.hash;
+
+			if (channels.TryGetValue(hash, out _)) {
+				channel.ShutdownAsync();
+			}
+		}
+	}
 
 	/// <summary>
 	/// <see href="https://grpc.github.io/grpc/csharp/api/Grpc.Core.Channel.html" />
 	/// </summary>
-	public class ChannelContainer
+	public partial class SharedChannel
 	{
 		//
 		public Channel Channel => channel;
-		public string Host => host;
-		public int Port => port;
-		public int Hash => hash;
 
 		//
 		Channel channel = null!;
-		string host = null!;
-		int port;
 		int hash;
 		int connection;
 
@@ -35,7 +76,7 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		private ChannelContainer() { }
+		private SharedChannel() { }
 
 		/// <summary>
 		/// .
@@ -43,12 +84,10 @@ namespace Flex.RPC
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="hash"></param>
-		public ChannelContainer(string host, int port, int hash)
+		public SharedChannel(string host, int port, int hash)
 		{
-			this.host = host;
-			this.port = port;
-			this.hash = hash;
 			this.channel = new Channel(host, port, ChannelCredentials.Insecure);
+			this.hash = hash;
 			this.connection = 0;
 			Task.Run(() => OnStateChanged(channel));
 		}

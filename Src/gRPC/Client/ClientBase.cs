@@ -1,5 +1,6 @@
 ﻿#pragma warning disable 8632
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flex.RPC
 {
+	using Google.Protobuf;
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
 
@@ -17,12 +19,10 @@ namespace Flex.RPC
 	{
 		//
 		public Channel Channel => channel.Channel;
-		public string Host => channel.Host;
-		public int Port => channel.Port;
-		public int Hash => channel.Hash;
+		public SharedChannel SharedChannel => channel;
 
 		//
-		ChannelContainer channel;
+		SharedChannel channel;
 
 
 		/// <summary>
@@ -30,29 +30,13 @@ namespace Flex.RPC
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="port"></param>
-		public ClientBase(string host, int port)
-		{
-			channel = ChannnelHelper.Instantiate(host, port);
-			channel.onStateChanged += OnStateChanged;
-		}
+		public ClientBase(string host, int port) => channel = SharedChannel.Instantiate(host, port);
 
 		/// <summary>
 		/// .
 		/// </summary>
 		/// <returns></returns>
-		~ClientBase()
-		{
-			channel.onStateChanged -= OnStateChanged;
-			Shutdown();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="e"></param>
-		public virtual void OnStateChanged(object? sender, ChannelState e)
-		{
-		}
+		~ClientBase() => SharedChannel.Release(channel);
 
 		/// <summary>
 		/// .

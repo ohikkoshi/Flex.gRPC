@@ -1,0 +1,32 @@
+syntax = "proto3";
+package grpc.proto.services;
+option csharp_namespace = "gRPC.Proto.Services";
+import "google/protobuf/empty.proto";
+
+// Services
+service Relay
+{
+	rpc Join (RelayRequest) returns (stream RelayReply);
+	rpc Leave (google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc UniCast (CastRequest) returns (google.protobuf.Empty);
+	rpc MultiCast (CastRequest) returns (google.protobuf.Empty);
+	rpc BroadCast (CastRequest) returns (google.protobuf.Empty);
+}
+
+// Messages
+message RelayRequest
+{
+	int32 roomId = 1;
+	string userName = 2;
+}
+
+message RelayReply
+{
+	bytes data = 2;
+}
+
+message CastRequest
+{
+	int32 id = 1;
+	bytes data = 2;
+}

@@ -1,7 +1,9 @@
 syntax = "proto3";
 package grpc.proto.services;
 option csharp_namespace = "gRPC.Proto.Services";
+//import "google/protobuf/empty.proto";
 
+// Template Services
 service Basic
 {
 	rpc Unary (Request) returns (Reply);
@@ -10,52 +12,59 @@ service Basic
 	rpc BidirectionalStream (stream Request) returns (stream Reply);
 }
 
+// Template Messages
+message Error
+{
+	int32 code = 1;
+	string message = 2;
+}
+
 message Request
 {
 	enum Result {
-		Success = 0;
-		Failed = 1;
+		Success	= 0;
+		Failed	= 1;
 	}
 
-	Result _result = 1;
-	double _double = 2;
-	float _float = 3;	
-	int32	_int32= 4;
-	int64	_int64=5;
-	uint32	_uint32=6;	
-	uint64	_uint64=7;
-	sint32	_sint32 =8;
-	sint64	_sint64=9;
-	fixed32	_fixed32=10;
-	fixed64	_fixed64=11;
-	sfixed32 _sfixed32=12;
-	sfixed64 _sfixed64=13;
-	bool	_bool = 14;	
-	string	_string =15;
-	bytes	_bytes = 16;
+	Result		_result		= 1;
+	double		_double		= 2;
+	float		_float		= 3;	
+	int32		_int32		= 4;
+	int64		_int64		= 5;
+	uint32		_uint32		= 6;	
+	uint64		_uint64		= 7;
+	sint32		_sint32		= 8;
+	sint64		_sint64		= 9;
+	fixed32		_fixed32	= 10;
+	fixed64		_fixed64	= 11;
+	sfixed32	_sfixed32	= 12;
+	sfixed64	_sfixed64	= 13;
+	bool		_bool		= 14;	
+	string		_string		= 15;
+	bytes		_bytes		= 16;
 }
 
 message Reply
 {
 	enum Result {
-		Success = 0;
-		Failed = 1;
+		Success	= 0;
+		Failed	= 1;
 	}
 
-	Result _result = 1;
-	double _double = 2;
-	float _float = 3;	
-	int32	_int32= 4;
-	int64	_int64=5;
-	uint32	_uint32=6;	
-	uint64	_uint64=7;
-	sint32	_sint32 =8;
-	sint64	_sint64=9;
-	fixed32	_fixed32=10;
-	fixed64	_fixed64=11;
-	sfixed32 _sfixed32=12;
-	sfixed64 _sfixed64=13;
-	bool	_bool = 14;	
-	string	_string =15;
-	bytes	_bytes = 16;
+	Result		_result		= 1;
+	double		_double		= 2;
+	float		_float		= 3;	
+	int32		_int32		= 4;
+	int64		_int64		= 5;
+	uint32		_uint32		= 6;	
+	uint64		_uint64		= 7;
+	sint32		_sint32		= 8;
+	sint64		_sint64		= 9;
+	fixed32		_fixed32	= 10;
+	fixed64		_fixed64	= 11;
+	sfixed32	_sfixed32	= 12;
+	sfixed64	_sfixed64	= 13;
+	bool		_bool		= 14;	
+	string		_string		= 15;
+	bytes		_bytes		= 16;
 }

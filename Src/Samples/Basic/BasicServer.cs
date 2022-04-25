@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Flex.RPC
 {
+	using Google.Protobuf;
 	using Google.Protobuf.WellKnownTypes;
 	using Grpc.Core;
 	using gRPC.Proto.Services;
@@ -29,12 +31,12 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		/// <param name="request"></param>
+		/// <param name="req"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public override Task<Reply> Unary(Request request, ServerCallContext context)
+		public override Task<Reply> Unary(Request req, ServerCallContext context)
 		{
-			Console.WriteLine($"{context.Host}:{context.Method}:{context.Peer}");
+			Console.WriteLine($"[{context.Host}][{context.Peer}][{context.Method}]");
 
 			return Task.FromResult(new Reply {
 				String = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -44,19 +46,19 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		/// <param name="request"></param>
+		/// <param name="req"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public override async Task<Reply> ClientStream(IAsyncStreamReader<Request> request, ServerCallContext context)
+		public override async Task<Reply> ClientStream(IAsyncStreamReader<Request> req, ServerCallContext context)
 		{
-			Console.WriteLine($"{context.Host}:{context.Method}:{context.Peer}");
+			Console.WriteLine($"[{context.Host}][{context.Peer}][{context.Method}]");
 
-			while (await request.MoveNext()) {
+			while (await req.MoveNext()) {
 				if (context.CancellationToken.IsCancellationRequested) {
 					break;
 				}
 
-				var stream = request.Current;
+				var stream = req.Current;
 			}
 
 			return new Reply();
@@ -65,13 +67,13 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		/// <param name="request"></param>
-		/// <param name="response"></param>
+		/// <param name="req"></param>
+		/// <param name="res"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public override async Task ServerStream(Request request, IServerStreamWriter<Reply> response, ServerCallContext context)
+		public override async Task ServerStream(Request req, IServerStreamWriter<Reply> res, ServerCallContext context)
 		{
-			Console.WriteLine($"{context.Host}:{context.Method}:{context.Peer}");
+			Console.WriteLine($"[{context.Host}][{context.Peer}][{context.Method}]");
 
 			for (int i = 0; i < 10; i++) {
 				if (context.CancellationToken.IsCancellationRequested) {
@@ -82,7 +84,7 @@ namespace Flex.RPC
 					Result = Reply.Types.Result.Success,
 				};
 
-				await response.WriteAsync(reply);
+				await res.WriteAsync(reply);
 				await Task.Delay(TimeSpan.FromSeconds(1.0));
 			}
 		}
@@ -90,25 +92,24 @@ namespace Flex.RPC
 		/// <summary>
 		/// .
 		/// </summary>
-		/// <param name="request"></param>
-		/// <param name="response"></param>
+		/// <param name="req"></param>
+		/// <param name="res"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public override async Task BidirectionalStream(IAsyncStreamReader<Request> request, IServerStreamWriter<Reply> response, ServerCallContext context)
+		public override async Task BidirectionalStream(IAsyncStreamReader<Request> req, IServerStreamWriter<Reply> res, ServerCallContext context)
 		{
-			Console.WriteLine($"{context.Host}:{context.Method}:{context.Peer}");
+			Console.WriteLine($"[{context.Host}][{context.Peer}][{context.Method}]");
 
-			while (await request.MoveNext()) {
+			while (await req.MoveNext()) {
 				if (context.CancellationToken.IsCancellationRequested) {
 					break;
 				}
 
-				var stream = request.Current;
+				var stream = req.Current;
 			}
 
 			for (int i = 0; i < 10; i++) {
 				if (context.CancellationToken.IsCancellationRequested) {
-					Console.WriteLine($"{context.Status.StatusCode.ToString()}");
 					break;
 				}
 
@@ -116,7 +117,7 @@ namespace Flex.RPC
 					Result = Reply.Types.Result.Success,
 				};
 
-				await response.WriteAsync(reply);
+				await res.WriteAsync(reply);
 				await Task.Delay(TimeSpan.FromSeconds(1.0));
 			}
 		}
